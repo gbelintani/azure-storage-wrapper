@@ -1,10 +1,9 @@
-﻿using AzureStorageHelper.ImageStrategies;
-using AzureStorageHelper.Interfaces;
+﻿using AzureStorageWrapper.ImageStrategies;
+using AzureStorageWrapper.Interfaces;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
-using ImageExtensions = AzureStorageHelper.Interfaces.ImageExtensions;
 
-namespace AzureStorageHelper
+namespace AzureStorageWrapper
 {
     public static class ImageProcessor
     {
@@ -17,12 +16,12 @@ namespace AzureStorageHelper
 
         private static async Task<byte[]> ApplyStrategyAsync(IImageBlob imageBlob, IImageStrategy strategy)
         {
-            var image = Image.Load(imageBlob.Stream);
+            var image = await Image.LoadAsync(imageBlob.Stream);
             image.Mutate(x => x.Resize(strategy.Width, strategy.Height, true));
             var memoryStream = new MemoryStream();
-            switch (imageBlob.ImageExtension)
+            switch (imageBlob.Extension)
             {
-                case ImageExtensions.gif:
+                case "gif":
                     await image.SaveAsGifAsync(memoryStream);
                     break;
                 default:

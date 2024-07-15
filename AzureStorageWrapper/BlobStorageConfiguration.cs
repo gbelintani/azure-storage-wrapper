@@ -1,4 +1,4 @@
-﻿namespace AzureStorageHelper
+﻿namespace AzureStorageWrapper
 {
     public class BlobStorageConfiguration
     {

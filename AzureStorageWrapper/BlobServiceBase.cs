@@ -1,21 +1,22 @@
 ﻿using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
-using AzureStorageHelper.Interfaces;
+using AzureStorageWrapper;
+using AzureStorageWrapper.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace AzureStorageHelper;
+namespace AzureStorageWrapper;
 
 public abstract class BlobServiceBase<T> : IBlobService<T> where T : IBlob
 {
-    protected readonly ILogger<BlobServiceBase<T>> _logger;
+    protected readonly ILogger<BlobServiceBase<T>> Logger;
     protected string Container { get; private set; }
     private readonly BlobStorageConfiguration _configuration;
 
     protected BlobServiceBase(ILogger<BlobServiceBase<T>> logger, IConfiguration configuration, string container)
     {
-        _logger = logger;
+        Logger = logger;
         Container = container;
         _configuration = new BlobStorageConfiguration();
         new ConfigureFromConfigurationOptions<BlobStorageConfiguration>(
@@ -31,37 +32,38 @@ public abstract class BlobServiceBase<T> : IBlobService<T> where T : IBlob
 
     protected async Task<string> UploadToBlobContainer(T blobInfo, byte[] stream)
     {
-        _logger.LogDebug($"Uploading blob {blobInfo.Name} to container {Container}");
+        Logger.LogDebug($"Uploading blob {blobInfo.Name} to container {Container}");
         var client = new BlobServiceClient(_configuration.BlobConnectionString);
         var container = client.GetBlobContainerClient(Container);
 
         var blob = container.GetBlobClient(blobInfo.GetFullBlobName());
-        var blobHttpHeader = new BlobHttpHeaders();
-        blobHttpHeader.ContentType = GetContentType(blobInfo);
+        var blobHttpHeader = new BlobHttpHeaders
+        {
+            ContentType = GetContentType(blobInfo)
+        };
 
         try
         {
             using var ms = new MemoryStream(stream);
             await blob.UploadAsync(ms, blobHttpHeader);
             ms.Close();
-            if (blobInfo.Metadata!= null && blobInfo.Metadata.Any())
+            if (blobInfo.Metadata.Any())
             {
                 await blob.SetMetadataAsync(blobInfo.Metadata);
             }
 
-            if (blobInfo.Tags != null && blobInfo.Tags.Any())
+            if (blobInfo.Tags.Any())
             {
                 await blob.SetTagsAsync(blobInfo.Tags);
             }
-            _logger.LogDebug($"Blob saved for {blobInfo.Name} to {blob.Uri.AbsoluteUri}");
+            Logger.LogDebug($"Blob saved for {blobInfo.Name} to {blob.Uri.AbsoluteUri}");
             return blob.Uri.AbsoluteUri;
         }
         catch (Exception ex)
         {
-            _logger.LogError($"Error saving blob for {blobInfo.Name}", ex);
+            Logger.LogError($"Error saving blob for {blobInfo.Name}", ex);
+            throw;
         }
-
-        return null;
     }
 
     public async Task<bool> DeleteByUrl(string blobUrl)
@@ -74,7 +76,7 @@ public abstract class BlobServiceBase<T> : IBlobService<T> where T : IBlob
 
     public async Task<bool> Delete(string blobname)
     {
-        _logger.LogDebug($"{blobname} Blob will be deleted");
+        Logger.LogDebug($"{blobname} Blob will be deleted");
         var client = new BlobServiceClient(_configuration.BlobConnectionString);
         var container = client.GetBlobContainerClient(Container);
         var blob = await container.DeleteBlobIfExistsAsync(blobname);
@@ -83,13 +85,13 @@ public abstract class BlobServiceBase<T> : IBlobService<T> where T : IBlob
 
     public async Task<bool> Delete(KeyValuePair<string, string> tagKv)
     {
-        _logger.LogDebug($"Blob with tag {tagKv.Value} will be deleted");
+        Logger.LogDebug($"Blob with tag {tagKv.Value} will be deleted");
         var client = new BlobServiceClient(_configuration.BlobConnectionString);
         var container = client.GetBlobContainerClient(Container);
         var blobs = container.FindBlobsByTagsAsync($"{tagKv.Key}='{tagKv.Value}'");
         await foreach (var blob in blobs)
         {
-            _logger.LogDebug($"Deleting blob {blob.BlobName}");
+            Logger.LogDebug($"Deleting blob {blob.BlobName}");
             var blobResult = await container.DeleteBlobIfExistsAsync(blob.BlobName);
         }
 
@@ -137,28 +139,19 @@ public abstract class BlobServiceBase<T> : IBlobService<T> where T : IBlob
         return fileStream;
     }
 
-    private string GetContentType(IBlob blob)
+    private static string GetContentType(IBlob blob)
     {
-        switch (blob.GetFullBlobName().Substring(blob.GetFullBlobName().LastIndexOf(".")))
+        return blob.GetFullBlobName().Substring(blob.GetFullBlobName().LastIndexOf(".", StringComparison.Ordinal)) switch
         {
-            case ".html":
-                return "text/html";
-            case ".css":
-                return "text/css";
-            case ".js":
-                return "application/javascript";
-            case ".json":
-                return "application/json";
-            case ".png":
-                return "image/png";
-            case ".jpg":
-                return "image/jpg";
-            case ".pdf":
-                return "application/pdf";
-            case ".txt":
-                return "text/plain";
-            default:
-                return blob.ContentType;
-        }
+            ".html" => "text/html",
+            ".css" => "text/css",
+            ".js" => "application/javascript",
+            ".json" => "application/json",
+            ".png" => "image/png",
+            ".jpg" => "image/jpg",
+            ".pdf" => "application/pdf",
+            ".txt" => "text/plain",
+            _ => blob.ContentType
+        };
     }
 }

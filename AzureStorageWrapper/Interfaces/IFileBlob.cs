@@ -1,4 +1,4 @@
-namespace AzureStorageHelper.Interfaces;
+namespace AzureStorageWrapper.Interfaces;
 
 public interface IFileBlob : IBlob
 {

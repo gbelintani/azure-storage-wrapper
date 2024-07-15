@@ -1,15 +1,17 @@
-﻿using AzureStorageHelper.Interfaces;
+﻿using AzureStorageWrapper;
+using AzureStorageWrapper.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace AzureStorageHelper
+namespace AzureStorageWrapper
 {
     public class ImageBlobService : BlobServiceBase<IImageBlob>
     {
-        private const string IMAGE_CONTAINER = "assets";
+        private const string DEFAULT_IMAGE_CONTAINER = "assets";
 
-        public ImageBlobService(ILogger<ImageBlobService> logger, IConfiguration configuration) : base(logger,
-            configuration, IMAGE_CONTAINER)
+        public ImageBlobService(ILogger<ImageBlobService> logger, IConfiguration configuration,
+            string? container = null)
+            : base(logger, configuration, container ?? DEFAULT_IMAGE_CONTAINER)
         {
         }
 
@@ -18,9 +20,9 @@ namespace AzureStorageHelper
             byte[] finalImage;
             if (blobInfo.ImageStrategy != null)
             {
-                _logger.LogDebug($"Image will be processed and saved for {blobInfo.Name}");
+                Logger.LogDebug($"Image will be processed and saved for {blobInfo.Name}");
                 finalImage = await ImageProcessor.ProcessAsync(blobInfo);
-                _logger.LogDebug($"Image processed for {blobInfo.Name}");
+                Logger.LogDebug($"Image processed for {blobInfo.Name}");
             }
             else
             {
