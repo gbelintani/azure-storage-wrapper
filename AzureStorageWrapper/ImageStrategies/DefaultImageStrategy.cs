@@ -1,6 +1,6 @@
-﻿using AzureStorageHelper.Interfaces;
+﻿using AzureStorageWrapper.Interfaces;
 
-namespace AzureStorageHelper.ImageStrategies
+namespace AzureStorageWrapper.ImageStrategies
 {
     public struct DefaultImageStrategy : IImageStrategy
     {

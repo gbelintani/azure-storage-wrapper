@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureStorageHelper", "AzureStorageHelper.csproj", "{ABDCB9D3-D646-4CB2-BD7E-922D5E371856}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureStorageWrapper", "AzureStorageWrapper.csproj", "{ABDCB9D3-D646-4CB2-BD7E-922D5E371856}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

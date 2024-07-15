@@ -1,15 +1,16 @@
-using AzureStorageHelper.Interfaces;
+using AzureStorageWrapper;
+using AzureStorageWrapper.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace AzureStorageHelper;
+namespace AzureStorageWrapper;
 
 public class FileBlobService : BlobServiceBase<IFileBlob>
 {
-    private const string FILE_CONTAINER = "docs";
+    private const string DEFAULT_FILE_CONTAINER = "docs";
 
-    public FileBlobService(ILogger<FileBlobService> logger, IConfiguration configuration) : base(logger, configuration,
-        FILE_CONTAINER)
+    public FileBlobService(ILogger<FileBlobService> logger, IConfiguration configuration, string? container = null)
+        : base(logger, configuration, container ?? DEFAULT_FILE_CONTAINER)
     {
     }
 
