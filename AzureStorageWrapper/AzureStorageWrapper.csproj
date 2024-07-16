@@ -8,6 +8,7 @@
     <RootNamespace>AzureStorageWrapper</RootNamespace>
   </PropertyGroup>
 
+
   <PropertyGroup>
     <PackageId>Gbelintani.AzureStorageWrapper</PackageId>
     <Title>Azure Storage Wrapper</Title>
