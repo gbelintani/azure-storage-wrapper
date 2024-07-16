@@ -2,7 +2,6 @@
 {
     public interface IImageBlob : IBlob
     {
-        public string Extension { get; }
         public IImageStrategy? ImageStrategy { get; }
 
         public new string FormatFileName =>
