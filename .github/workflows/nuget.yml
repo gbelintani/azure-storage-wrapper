@@ -9,7 +9,7 @@ on:
       - '[0-9]+.[0-9]+.[0-9]+' # Push events to matching v*, i.e. 1.0, 20.15.10
 
 jobs:
-  build:
+  publish:
 
     runs-on: ubuntu-latest
 
@@ -24,6 +24,6 @@ jobs:
     - name: Build
       run: dotnet build ./AzureStorageWrapper/ --no-restore
     - name: Pack
-      run: dotnet pack ./AzureStorageWrapper/ -p:PackageVersion=${{ github.ref_name }} --no-build --configuration Release
+      run: dotnet pack ./AzureStorageWrapper/ -p:PackageVersion=${{ github.ref_name }} --configuration Release
     - name: Publish NuGet
       run: dotnet nuget push ./AzureStorageWrapper/bin/Release/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
