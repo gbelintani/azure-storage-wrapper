@@ -9,12 +9,27 @@
   </PropertyGroup>
 
 
+  <PropertyGroup>
+    <PackageId>Gbelintani.AzureStorageWrapper</PackageId>
+    <Title>Azure Storage Wrapper</Title>
+    <Description>A simple wrapper for Azure Storage</Description>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageVersion>$(PackageVersion)</PackageVersion>
+    <Authors>gbelintani</Authors>
+    <RepositoryUrl>https://github.com/gbelintani/azure-storage-helper</RepositoryUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="Azure.Storage.Blobs" Version="12.20.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.1" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="8.0.0" />
     <PackageReference Include="SixLabors.ImageSharp" Version="3.1.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="README.md" Pack="true" PackagePath="\"/>
   </ItemGroup>
   
 </Project>
