@@ -2,18 +2,13 @@ namespace AzureStorageWrapper.Interfaces;
 
 public interface IBlob
 {
-    public string Name { get; }
-    public string Folder { get; }
-    public Stream Stream { get; }
-    public string Extension { get; }
-    public string FormatFileName => Name;
-    public string ContentType { get; }
-    public IDictionary<string, string> Metadata { get;  }
-    public IDictionary<string, string> Tags { get; }
-    
-    public string GetFullBlobName()
-    {
-        return $"{Folder}/{FormatFileName}";
-    }
-    
+    string Name { get; }
+    string Folder { get; }
+    Stream Stream { get; }
+    string Extension { get; }
+    string ContentType { get; }
+    IDictionary<string, string>? Metadata { get; }
+    IDictionary<string, string>? Tags { get; }
+    WrapperBlobType Type { get; }
+    string GetFullBlobName();
 }
