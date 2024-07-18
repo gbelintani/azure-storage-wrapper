@@ -1,8 +1,7 @@
-﻿namespace AzureStorageWrapper.Interfaces
+﻿namespace AzureStorageWrapper.Interfaces;
+
+public interface IImageStrategy
 {
-    public interface IImageStrategy
-    {
-        int Width { get; }
-        int Height { get; }
-    }
+    int Width { get; }
+    int Height { get; }
 }

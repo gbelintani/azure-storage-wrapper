@@ -1,10 +1,12 @@
 # Azure Storage Wrapper
 
-This is a simple wrapper for Azure Storage. For simple use cases you can use this in a simpler way than the official Azure Storage SDK.
-It does the instantiation of the clients and abstracts the calls to the basic operations like uploading, downloading and deleting. It also simplifies tagging, adding metadata and setting the content type.
-
+This is a simple wrapper for Azure Storage. For simple use cases you can use this in a simpler way than the official
+Azure Storage SDK.
+It does the instantiation of the clients and abstracts the calls to the basic operations like uploading, downloading and
+deleting. It also simplifies tagging, adding metadata and setting the content type.
 
 There's 2 services available:
+
 - File Blob Storage
   Which manages files in a container
 
@@ -22,7 +24,6 @@ Add the connection string to your appsettings.json or secrets as follows:
 ```
 
 ### File Blob Storage
-
 
 Inject as dependency in your Startup.cs
 
