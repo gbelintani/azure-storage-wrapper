@@ -7,20 +7,27 @@ using Microsoft.Extensions.Options;
 
 namespace AzureStorageWrapper;
 
-public class BlobWrapperService : IBlobWrapperService
+public class BlobContainer
 {
-    private readonly ILogger<BlobWrapperService> _logger;
-    private readonly AzureStorageWrapperOptions _options;
+    public string Name { get; set; }
+}
 
-    public BlobWrapperService(ILogger<BlobWrapperService> logger, IOptions<AzureStorageWrapperOptions> options)
+public class BlobWrapperService<T> : IBlobWrapperService<T> where T : BlobBase, new()
+{
+    private readonly ILogger<BlobWrapperService<T>> _logger;
+    private readonly AzureStorageWrapperOptions _options;
+    private readonly string _container;
+
+    public BlobWrapperService(ILogger<BlobWrapperService<T>> logger, IOptions<AzureStorageWrapperOptions> options)
     {
         _logger = logger;
         if (!options.Value.IsValid())
             throw new ArgumentException("No ConnectionString defined for AzureStorageWrapper");
         _options = options.Value;
+        _container = _options.GetContainerName<T>(new T());
     }
 
-    public Task<string> Upload(IBlob blobInfo)
+    public Task<string> Upload(T blobInfo)
     {
         return blobInfo.Type switch
         {
@@ -30,27 +37,27 @@ public class BlobWrapperService : IBlobWrapperService
         };
     }
 
-    public async Task<bool> DeleteByUrl(WrapperBlobType type, string blobUrl)
+    public async Task<bool> DeleteByUrl(string blobUrl)
     {
-        var path = $"{_options.GetContainer(type)}/";
+        var path = $"{_container}/";
         var blobName = blobUrl.Substring(blobUrl.IndexOf(path, StringComparison.Ordinal) + path.Length);
 
-        return await Delete(type, blobName);
+        return await Delete(blobName);
     }
 
-    public async Task<bool> Delete(WrapperBlobType type, string blobname)
+    public async Task<bool> Delete(string blobname)
     {
         _logger.LogDebug($"{blobname} Blob will be deleted");
         var client = new BlobServiceClient(_options.ConnectionString);
-        var container = client.GetBlobContainerClient(_options.GetContainer(type));
+        var container = client.GetBlobContainerClient(_container);
         var blob = await container.DeleteBlobIfExistsAsync(blobname);
         return blob.Value;
     }
 
-    public async Task<IEnumerable<BlobResponse>> GetAll(WrapperBlobType type, string? prefix = null)
+    public async Task<IEnumerable<BlobResponse>> GetAll(string? prefix = null)
     {
         var client = new BlobServiceClient(_options.ConnectionString);
-        var container = client.GetBlobContainerClient(_options.GetContainer(type));
+        var container = client.GetBlobContainerClient(_container);
         var blobs = new List<BlobResponse>();
         await foreach (var blobItem in container.GetBlobsAsync(prefix: prefix))
             blobs.Add(new BlobResponse(blobItem.Name, blobItem.Properties.LastModified));
@@ -58,10 +65,10 @@ public class BlobWrapperService : IBlobWrapperService
         return blobs;
     }
 
-    public async Task<IEnumerable<BlobResponse>> GetByTag(WrapperBlobType type, KeyValuePair<string, string> tagKv)
+    public async Task<IEnumerable<BlobResponse>> GetByTag(KeyValuePair<string, string> tagKv)
     {
         var client = new BlobServiceClient(_options.ConnectionString);
-        var container = client.GetBlobContainerClient(_options.GetContainer(type));
+        var container = client.GetBlobContainerClient(_container);
         var blobs = new List<BlobResponse>();
         var blobsByTag = container.FindBlobsByTagsAsync($"{tagKv.Key}='{tagKv.Value}'");
         await foreach (var blobItem in blobsByTag) blobs.Add(new BlobResponse(blobItem.BlobName, null));
@@ -69,10 +76,10 @@ public class BlobWrapperService : IBlobWrapperService
         return blobs;
     }
 
-    public async Task<Stream?> GetFileStream(WrapperBlobType type, string blobName)
+    public async Task<Stream?> GetFileStream(string blobName)
     {
         var client = new BlobServiceClient(_options.ConnectionString);
-        var container = client.GetBlobContainerClient(_options.GetContainer(type));
+        var container = client.GetBlobContainerClient(_container);
         var fileStream = new MemoryStream();
         var result = await container.GetBlobClient(blobName).DownloadToAsync(fileStream);
         if (result.IsError) return null;
@@ -109,9 +116,9 @@ public class BlobWrapperService : IBlobWrapperService
 
     private async Task<string> UploadToBlobContainer(IBlob blobInfo, byte[] stream)
     {
-        _logger.LogDebug($"Uploading blob {blobInfo.Name} to container {_options.GetContainer(blobInfo.Type)}");
+        _logger.LogDebug($"Uploading blob {blobInfo.Name} to container {_container}");
         var client = new BlobServiceClient(_options.ConnectionString);
-        var container = client.GetBlobContainerClient(_options.GetContainer(blobInfo.Type));
+        var container = client.GetBlobContainerClient(_container);
 
         var blob = container.GetBlobClient(blobInfo.GetFullBlobName());
         var blobHttpHeader = new BlobHttpHeaders
@@ -137,11 +144,11 @@ public class BlobWrapperService : IBlobWrapperService
         }
     }
 
-    public async Task<bool> Delete(WrapperBlobType type, KeyValuePair<string, string> tagKv)
+    public async Task<bool> Delete(KeyValuePair<string, string> tagKv)
     {
         _logger.LogDebug($"Blob with tag {tagKv.Value} will be deleted");
         var client = new BlobServiceClient(_options.ConnectionString);
-        var container = client.GetBlobContainerClient(_options.GetContainer(type));
+        var container = client.GetBlobContainerClient(_container);
         var blobs = container.FindBlobsByTagsAsync($"{tagKv.Key}='{tagKv.Value}'");
         await foreach (var blob in blobs)
         {

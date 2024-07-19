@@ -18,10 +18,10 @@ public class AzureStorageWrapperOptions
         _containers[type] = new ContainerConfiguration(name, type);
     }
 
-    public string GetContainer(WrapperBlobType type)
+    public string GetContainerName<T>(T blob) where T : IBlob
     {
-        if (!_containers.TryGetValue(type, out var container))
-            throw new ArgumentException($"No container for type {type} defined");
+        if (!_containers.TryGetValue(blob.Type, out var container))
+            throw new ArgumentException($"No container for type {blob.Type} defined");
 
         return container.Name;
     }

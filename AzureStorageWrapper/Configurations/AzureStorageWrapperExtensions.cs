@@ -1,3 +1,4 @@
+using AzureStorageWrapper.DefaultBlobs;
 using AzureStorageWrapper.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -14,6 +15,7 @@ public static class AzureStorageWrapperExtensions
         Action<AzureStorageWrapperOptions> configure)
     {
         services.Configure(configure);
-        services.AddScoped<IBlobWrapperService, BlobWrapperService>();
+        services.AddScoped<BlobWrapperService<GenericFileBlob>>();
+        services.AddScoped<BlobWrapperService<GenericImageBlob>>();
     }
 }
