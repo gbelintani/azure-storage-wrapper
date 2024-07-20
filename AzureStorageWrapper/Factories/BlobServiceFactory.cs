@@ -22,7 +22,7 @@ public class BlobServiceFactory : IBlobServiceFactory
         {
             throw new ArgumentException("No ConnectionString defined for AzureStorageWrapper");
         }
-        if(blobContainer.IsValid())
+        if(!blobContainer.IsValid())
         {
             throw new ArgumentException("BlobContainer is required");
         }

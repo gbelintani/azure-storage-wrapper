@@ -3,7 +3,7 @@ namespace AzureStorageWrapper.Interfaces;
 public interface IBlob
 {
     string Name { get; }
-    string Folder { get; }
+    string? Folder { get; }
     Stream Stream { get; }
     string Extension { get; }
     string ContentType { get; }
