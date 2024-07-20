@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureStorageWrapper", "AzureStorageWrapper.csproj", "{ABDCB9D3-D646-4CB2-BD7E-922D5E371856}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureStorageWrapper.Sandbox", "..\AzureStorageWrapper.Sandbox\AzureStorageWrapper.Sandbox.csproj", "{0FF6607C-38E9-489B-BB99-3EB5479F6E21}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{ABDCB9D3-D646-4CB2-BD7E-922D5E371856}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ABDCB9D3-D646-4CB2-BD7E-922D5E371856}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ABDCB9D3-D646-4CB2-BD7E-922D5E371856}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0FF6607C-38E9-489B-BB99-3EB5479F6E21}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0FF6607C-38E9-489B-BB99-3EB5479F6E21}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0FF6607C-38E9-489B-BB99-3EB5479F6E21}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0FF6607C-38E9-489B-BB99-3EB5479F6E21}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
