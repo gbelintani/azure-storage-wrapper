@@ -7,27 +7,28 @@ using Microsoft.Extensions.Options;
 
 namespace AzureStorageWrapper;
 
-public class BlobContainer
+public class BlobWrapperService : IBlobWrapperService 
 {
-    public string Name { get; set; }
-}
-
-public class BlobWrapperService<T> : IBlobWrapperService<T> where T : BlobBase, new()
-{
-    private readonly ILogger<BlobWrapperService<T>> _logger;
+    private readonly ILogger<BlobWrapperService> _logger;
     private readonly AzureStorageWrapperOptions _options;
     private readonly string _container;
 
-    public BlobWrapperService(ILogger<BlobWrapperService<T>> logger, IOptions<AzureStorageWrapperOptions> options)
+    public BlobWrapperService(ILogger<BlobWrapperService> logger, IOptions<AzureStorageWrapperOptions> options, BlobContainer blobContainer)
     {
         _logger = logger;
         if (!options.Value.IsValid())
+        {
             throw new ArgumentException("No ConnectionString defined for AzureStorageWrapper");
+        }
+        if(blobContainer.IsValid())
+        {
+            throw new ArgumentException("BlobContainer is required");
+        }
         _options = options.Value;
-        _container = _options.GetContainerName<T>(new T());
+        _container = blobContainer.Name;
     }
 
-    public Task<string> Upload(T blobInfo)
+    public Task<string> Upload(BlobBase blobInfo)
     {
         return blobInfo.Type switch
         {
