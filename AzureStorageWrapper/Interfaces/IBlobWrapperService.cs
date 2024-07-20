@@ -1,8 +1,8 @@
 ﻿namespace AzureStorageWrapper.Interfaces;
 
-public interface IBlobWrapperService<in T> where T : BlobBase
+public interface IBlobWrapperService
 {
-    Task<string> Upload(T blobInfo);
+    Task<string> Upload(BlobBase blobInfo);
     Task<IEnumerable<BlobResponse>> GetAll(string? prefix = null);
     Task<bool> DeleteByUrl(string blobUrl);
     Task<bool> Delete(string blobname);
