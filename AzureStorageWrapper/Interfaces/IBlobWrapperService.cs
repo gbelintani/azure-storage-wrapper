@@ -2,10 +2,10 @@
 
 public interface IBlobWrapperService
 {
-    Task<string> Upload(BlobBase blobInfo);
+    Task<string> Upload(BlobBase blobInfo, CancellationToken ct = default);
     Task<IEnumerable<BlobResponse>> GetAll(string? prefix = null);
     Task<bool> DeleteByUrl(string blobUrl);
-    Task<bool> Delete(string blobname);
+    Task<bool> Delete(string blobName);
     Task<Stream?> GetFileStream(string blobName);
     Task<IEnumerable<BlobResponse>> GetByTag(KeyValuePair<string, string> tagKv);
 }

@@ -39,13 +39,13 @@ public class BlobSandbox
 
     public BlobSandbox(IBlobServiceFactory blobServiceFactory)
     {
-        _blobServiceWrapper = blobServiceFactory.Create(new BlobContainer("WrapperTest", PublicAccessType.Blob));
+        _blobServiceWrapper = blobServiceFactory.Create(new BlobContainerOptions("WrapperTest", PublicAccessType.Blob));
     }
 
     public async Task<string[]> UploadTests()
     {
         var blobImg = new GenericImageBlob("test", "gif", File.OpenRead("Resources\\test.gif"), "AzureStorageWrapper",
-            new DefaultImageStrategy(200, 0));
+            new ResizeImageStrategy(200, 0));
         var urlGif = await _blobServiceWrapper.Upload(blobImg);
         var blobText = new GenericFileBlob("test", "txt", File.OpenRead("Resources\\test.txt"), "AzureStorageWrapper");
         var urlText = await _blobServiceWrapper.Upload(blobText);
