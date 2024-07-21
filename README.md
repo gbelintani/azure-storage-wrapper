@@ -1,15 +1,9 @@
 # Azure Storage Wrapper
 
-This is a simple wrapper for Azure Storage. For simple use cases you can use this in a simpler way than the official Azure Storage SDK.
-It does the instantiation of the clients and abstracts the calls to the basic operations like uploading, downloading and deleting. It also simplifies tagging, adding metadata and setting the content type.
-
-
-There's 2 services available:
-- File Blob Storage
-  Which manages files in a container
-
-- Image Blob Storage
-  Which can resize images based on an ImageStrategy and store them in a container
+This is a simple wrapper for Azure Storage. For simple use cases you can use this in a simpler way than the official
+Azure Storage SDK.
+It does the instantiation of the clients and abstracts the calls to the basic operations like uploading, downloading and
+deleting. It also simplifies tagging, adding metadata and setting the content type.
 
 ## Usage
 
@@ -17,96 +11,56 @@ Add the connection string to your appsettings.json or secrets as follows:
 
 ```json
 {
-    "BlobStorageConfiguration:BlobConnectionString": "YOUR_BLOB_CONNECTION_STRING"
+    "ConnectionStrings:BlobDefaultConnection": "YOUR_BLOB_CONNECTION_STRING"
 }
 ```
-
-### File Blob Storage
-
 
 Inject as dependency in your Startup.cs
 
 ```csharp
-services.AddScoped<FileBlobService>();
+services.AddAzureStorageWrapper(config.GetConnectionString("BlobDefaultConnection"));
 ```
 
-Make a class that implements IFileBlob, instantiate it and use the service
+### Files
+
+You can use the service like this:
 
 ```csharp
-public class GenericFile : IFileBlob
+
+private readonly IBlobWrapperService _blobServiceWrapper;
+
+public BlobSandbox(IBlobServiceFactory blobServiceFactory)
 {
-    public string Name { get; }
-    public string Folder { get; }
-    public Stream Stream { get; }
-    public string Extension { get; }
-    public string ContentType { get; }
-    public IDictionary<string, string> Metadata { get; } = new Dictionary<string, string>();
-    public IDictionary<string, string> Tags { get; } = new Dictionary<string, string>();
+    _blobServiceWrapper = blobServiceFactory.Create(new BlobContainerOptions("WrapperTest", PublicAccessType.Blob));
 }
 
-
-var file = new GenericFile()
-{
-    Name = "test",
-    Folder = "test",
-    Stream = stream,
-    Extension = "txt"
-};
-
 //Upload
-var url = await _fileBlobService.Upload(file);
+var blobText = new GenericFileBlob("test", "txt", File.OpenRead("Resources\\test.txt"), "AzureStorageWrapper");
+var urlText = await _blobServiceWrapper.Upload(blobText);
 
 //Delete by Tag
-await _fileBlobService.Delete(new KeyValuePair<string, string>("ID","1234"));
+await _blobServiceWrapper.Delete(new KeyValuePair<string, string>("ID","1234"));
 
 //Get By Tag
-var blobNames = await _fileBlobService.GetByTag(new KeyValuePair<string, string>("ID", "1234"));
+var blobNames = await _blobServiceWrapper.GetByTag(new KeyValuePair<string, string>("ID", "1234"));
 
 //Download
-var downloadStream = await _fileBlobService.GetFileStream(blobNames.First().Name);
+var downloadStream = await _blobServiceWrapper.GetFileStream(blobNames.First().Name);
 ```
 
-### Image Blob Storage
+### Images
 
-Inject as dependency in your Startup.cs
-
-```csharp
-services.AddScoped<ImageBlobService>();
-```
-
-Make a class that implements IImageStrategy
 
 ```csharp
-public class AvatarProfileStrategy : IImageStrategy
+private readonly IBlobWrapperService _blobServiceWrapper;
+
+public BlobSandbox(IBlobServiceFactory blobServiceFactory)
 {
-    public int Width => 128;
-    public int Height => 128; //0 is auto
-}
-```
-
-Make a class that implements IImageBlob and use the service
-
-```csharp
-public class AvatarProfileImage : IImageBlob
-{
-    public IImageStrategy? ImageStrategy { get; } = AvatarProfileStrategy(); //null for no resizing
-    public string Name { get; }
-    public string Folder { get; }
-    public Stream Stream { get; }
-    public string Extension { get; }
-    public string ContentType { get; }
-    public IDictionary<string, string> Metadata { get; } = new Dictionary<string, string>();
-    public IDictionary<string, string> Tags { get; } = new Dictionary<string, string>();
+    _blobServiceWrapper = blobServiceFactory.Create(new BlobContainerOptions("WrapperTest", PublicAccessType.Blob));
 }
 
-var image = new AvatarProfileImage()
-{
-    Name = "test.png",
-    Folder = "test",
-    Stream = stream,
-    Extension = "png"
-};
-
-//Upload
-var url = await _imageBlobService.Upload(image);
+//Resize and Upload 
+var blobImg = new GenericImageBlob("test", "gif", File.OpenRead("Resources\\test.gif"), "AzureStorageWrapper", new ResizeImageStrategy(200, 0));
+var urlText = await _blobServiceWrapper.Upload(blobText);
 ```
+

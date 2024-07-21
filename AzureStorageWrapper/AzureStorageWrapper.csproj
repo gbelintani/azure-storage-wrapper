@@ -6,6 +6,7 @@
         <Nullable>enable</Nullable>
         <AssemblyName>AzureStorageWrapper</AssemblyName>
         <RootNamespace>AzureStorageWrapper</RootNamespace>
+        <UserSecretsId>c2004d09-75c7-450f-ac59-f9b51a3c757e</UserSecretsId>
     </PropertyGroup>
 
 
@@ -23,6 +24,7 @@
     <ItemGroup>
         <PackageReference Include="Azure.Storage.Blobs" Version="12.20.0"/>
         <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="8.0.0"/>
+        <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0" />
         <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.1"/>
         <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="8.0.0"/>
         <PackageReference Include="SixLabors.ImageSharp" Version="3.1.4"/>
