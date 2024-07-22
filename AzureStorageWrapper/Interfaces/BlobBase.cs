@@ -57,7 +57,7 @@ public abstract class BlobBase : IBlob
     /// Gets the full name of the blob. If the folder is not set, the name will be returned as is. Otherwise, the folder and the name will be concatenated.
     /// </summary>
     /// <returns>The full name of the blob.</returns>
-    public string GetFullBlobName()
+    public virtual string GetFullBlobName()
     {
         if (string.IsNullOrEmpty(Folder))
         {
