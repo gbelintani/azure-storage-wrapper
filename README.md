@@ -1,4 +1,6 @@
 # Azure Storage Wrapper
+![NuGet Version](https://img.shields.io/nuget/v/Gbelintani.AzureStorageWrapper?logo=nuget)
+![Workflow status](https://github.com/gbelintani/azure-storage-wrapper/actions/workflows/dotnet.yml/badge.svg)
 
 This is a simple wrapper for Azure Storage. The main motivation for this was to have a simpler way to upload images with resizing options to Azure Storage.
 For simple use cases you can use this in a simpler way than the official Azure Storage SDK.
@@ -7,6 +9,12 @@ deleting. It also simplifies tagging, adding metadata and setting the content ty
 
 
 ## Usage
+
+Install from nuget 
+```
+Install-Package Gbelintani.AzureStorageWrapper
+```
+
 
 Add the connection string to your appsettings.json or secrets as follows:
 
