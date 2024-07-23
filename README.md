@@ -1,10 +1,10 @@
 # Azure Storage Wrapper
 
-This is a simple wrapper for Azure Storage. For simple use cases you can use this in a simpler way than the official
-Azure Storage SDK.
+This is a simple wrapper for Azure Storage. The main motivation for this was to have a simpler way to upload images with resizing options to Azure Storage.
+For simple use cases you can use this in a simpler way than the official Azure Storage SDK.
 It does the instantiation of the clients and abstracts the calls to the basic operations like uploading, downloading and
 deleting. It also simplifies tagging, adding metadata and setting the content type.
-Also manipulates images for resizing prior to the upload.
+
 
 ## Usage
 

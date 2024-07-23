@@ -18,11 +18,6 @@ public static class AzureStorageWrapperExtensions
     /// <exception cref="ArgumentException"> Thrown when the connection string is null or empty. </exception>
     public static void AddAzureStorageWrapper(this IServiceCollection services, string? connectionString)
     {
-        if (string.IsNullOrEmpty(connectionString))
-        {
-            throw new ArgumentException("ConnectionString is required");
-        }
-
         AddAzureStorageWrapper(services, options => { options.ConnectionString = connectionString; });
     }
 
