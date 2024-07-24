@@ -22,8 +22,8 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore ./AzureStorageWrapper/
     - name: Build
-      run: dotnet build ./AzureStorageWrapper/ --no-restore
+      run: dotnet build ./AzureStorageWrapper/ --no-restore --configuration Release
     - name: Pack
-      run: dotnet pack ./AzureStorageWrapper/ -p:PackageVersion=${{ github.ref_name }} --configuration Release
+      run: dotnet pack ./AzureStorageWrapper/AzureStorageWrapper.csproj -p:PackageVersion=${{ github.ref_name }} --configuration Release -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg
     - name: Publish NuGet
       run: dotnet nuget push ./AzureStorageWrapper/bin/Release/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
